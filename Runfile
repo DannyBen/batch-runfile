@@ -1,0 +1,32 @@
+require 'yaml'
+
+title   "Batcher"
+summary "Run commands in batch with parameters from a file"
+version "0.1.0"
+
+usage  "batch CONFIG_FILE [--dry]"
+help   "Run commands in batch using a config file"
+option "-d --dry", "Do not run, just show the commands"
+action :batch do |args|
+  file = args['CONFIG_FILE']
+  dry = args['--dry']
+
+  abort "File not found: #{file}" unless File.exist? file
+
+  config = YAML.load_file file
+  script = config['script']
+  values = config['values']
+
+  separator = "_" * terminal_width
+
+  values.each do |value|
+    say "!txtpur!#{value}\n"
+    script.each do |command|
+      cmd = command.gsub ':value', value
+      dry ? say(cmd) : run(cmd)
+    end
+
+    say "\n!txtblu!#{separator}\n"
+  end
+ 
+end

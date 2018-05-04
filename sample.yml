@@ -1,0 +1,7 @@
+script:
+- echo :value
+- echo "--- :value one more time ---"
+
+values:
+- hello
+- world
